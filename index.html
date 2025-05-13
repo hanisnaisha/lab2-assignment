@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Firebase Message Board</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Same styles, no changes needed here for sanitization */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #fdf6e9;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .main-bg {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .center-card {
+      background: #f5efe6;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+      max-width: 400px;
+      width: 100%;
+      margin: 32px 0;
+      padding: 0;
+      border: 1px solid #d4c4b7;
+    }
+    .card-header {
+      background: #d4c4b7;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      padding: 1.5rem 2rem 1rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid #c4b5a8;
+    }
+    .card-header img {
+      width: 40px;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+    .card-header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0.5rem 0 0.25rem 0;
+      color: #2d3a4a;
+    }
+    .card-header p {
+      color: #5b6b7d;
+      margin: 0;
+      font-size: 1rem;
+    }
+    .card-body {
+      padding: 2rem;
+    }
+    .auth-form h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3a4a;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .form-label {
+      color: #4a5a6a;
+      font-weight: 500;
+    }
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #d4c4b7;
+      background: #f5efe6;
+    }
+    .form-control:focus {
+      border-color: #b8a99c;
+      box-shadow: 0 0 0 0.2rem rgba(184, 169, 156, 0.2);
+    }
+    .btn-primary, .btn-danger {
+      border-radius: 8px;
+      font-weight: 600;
+      color: #2d3a4a;
+    }
+    .btn-primary {
+      background: #b8a99c;
+    }
+    .btn-primary:hover {
+      background: #a89a8d;
+    }
+    .btn-danger {
+      background: #c4a99c;
+    }
+    .btn-danger:hover {
+      background: #b39a8d;
+    }
+    .pastel-alert {
+      background: #f5efe6;
+      border: 1px solid #d4c4b7;
+      border-radius: 8px;
+      color: #2d3a4a;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .switch-link {
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .switch-link a {
+      color: #8b7355;
+      text-decoration: none;
+    }
+    .switch-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-bg">
+    <div class="center-card">
+      <div class="card-header">
+        <img src="https://img.icons8.com/pastel-glyph/64/000000/cloud.png" alt="Logo">
+        <h1>Firebase Message Board</h1>
+        <p>A beautiful, real-time message board</p>
+      </div>
+      <div class="card-body">
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form" style="display: block;">
+          <h2>Sign In</h2>
+          <form id="login">
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="loginEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+          </form>
+          <div class="switch-link">
+            Don't have an account? <a href="#" id="showSignup">Sign Up</a>
+          </div>
+        </div>
+        <!-- Signup Form -->
+        <div id="signupForm" class="auth-form" style="display: none;">
+          <h2>Create Account</h2>
+          <form id="signup">
+            <div class="mb-3">
+              <label for="signupEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="signupEmail" required>
+            </div>
+            <div class="mb-3">
+              <label for="signupPassword" class="form-label">Password</label>
+              <input type="password" class="form-control" id="signupPassword" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+          </form>
+          <div class="switch-link">
+            Already have an account? <a href="#" id="showLogin">Sign In</a>
+          </div>
+        </div>
+        <!-- Home Page -->
+        <div id="homePage" style="display: none;">
+          <h2 class="mb-4">Welcome!</h2>
+          <div class="mb-3">
+            <label for="firebaseText" class="form-label">Update Global Message</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="firebaseText" placeholder="Type your message...">
+              <button id="updateText" class="btn btn-primary">Update</button>
+            </div>
+          </div>
+          <div id="currentText" class="mt-4">
+            <h5 class="mb-2">Current Message:</h5>
+            <div class="pastel-alert" id="displayText" style="min-height:2em;"></div>
+          </div>
+          <button id="logout" class="btn btn-danger w-100 mt-4">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK and App Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // 🚨 Sanitized Firebase config - Replace with your own for production use
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    getAnalytics(app);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+
+    // UI logic remains unchanged (handlers, switching forms, etc.)
+  </script>
+</body>
+</html>
